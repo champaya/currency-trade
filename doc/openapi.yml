@@ -1,0 +1,347 @@
+openapi: 3.0.3
+info:
+  title: 地域通貨取引API
+  description: 地域通貨取引システムのAPIドキュメント
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: 全ユーザーの取得
+      responses:
+        "200":
+          description: 全ユーザーのリストを取得
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      summary: 新規ユーザー登録
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserForm"
+      responses:
+        "201":
+          description: ユーザーの登録が成功
+    delete:
+      summary: ユーザーの削除
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: ユーザー削除が成功
+  /users/{user_id}:
+    put:
+      summary: ユーザーの更新
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserForm"
+      responses:
+        "200":
+          description: ユーザーの更新が成功
+
+  /wallets:
+    get:
+      summary: ウォレットの取得
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 指定されたユーザーのウォレットを取得
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Wallet"
+    post:
+      summary: ウォレットの作成
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletForm"
+      responses:
+        "201":
+          description: ウォレット作成が成功
+
+  /wallets/{wallet_id}:
+    put:
+      summary: ウォレットの更新
+      parameters:
+        - in: path
+          name: wallet_id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletForm"
+      responses:
+        "200":
+          description: ウォレットの更新が成功
+
+  /trades:
+    get:
+      summary: ユーザーの取引を取得
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ユーザーの取引一覧を取得
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Trade"
+    post:
+      summary: 新規取引作成
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeForm"
+      responses:
+        "201":
+          description: 新規取引作成が成功
+    delete:
+      summary: 取引削除
+      parameters:
+        - in: query
+          name: trade_id
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: 取引削除が成功
+
+  /trade-history:
+    get:
+      summary: 取引履歴の取得
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ユーザーの取引履歴を取得
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TradeHistory"
+
+  /rates:
+    get:
+      summary: 最新レートの取得
+      responses:
+        "200":
+          description: 全てのレートを取得
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Rate"
+    post:
+      summary: レートの更新
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RateForm"
+      responses:
+        "201":
+          description: レート更新が成功
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        password_hash:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    UserForm:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "user123"
+        email:
+          type: string
+          example: "user@example.com"
+        password:
+          type: string
+          example: "securePassword"
+
+    Wallet:
+      type: object
+      properties:
+        wallet_id:
+          type: integer
+        user_id:
+          type: integer
+        currency_type:
+          type: string
+          enum: ["local_currency", "cash"]
+        balance:
+          type: number
+          format: double
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    WalletForm:
+      type: object
+      properties:
+        currency_type:
+          type: string
+          enum: ["local_currency", "cash"]
+          example: "local_currency"
+        balance:
+          type: number
+          format: double
+          example: 100.00
+
+    Trade:
+      type: object
+      properties:
+        trade_id:
+          type: integer
+        user_id:
+          type: integer
+        trade_type:
+          type: string
+          enum: ["buy", "sell"]
+        amount:
+          type: number
+          format: double
+        rate:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: ["open", "completed", "cancelled"]
+        matched_trade_id:
+          type: integer
+        matched_rate:
+          type: number
+          format: double
+        matched_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    TradeForm:
+      type: object
+      properties:
+        trade_type:
+          type: string
+          enum: ["buy", "sell"]
+          example: "buy"
+        amount:
+          type: number
+          format: double
+          example: 100.0
+        rate:
+          type: number
+          format: double
+          example: 1.25
+
+    TradeHistory:
+      type: object
+      properties:
+        history_id:
+          type: integer
+        user_id:
+          type: integer
+        trade_id:
+          type: integer
+        trade_type:
+          type: string
+          enum: ["buy", "sell"]
+        amount:
+          type: number
+          format: double
+        rate:
+          type: number
+          format: double
+        completed_at:
+          type: string
+          format: date-time
+
+    Rate:
+      type: object
+      properties:
+        rate_id:
+          type: integer
+        currency_pair:
+          type: string
+          example: "LOCAL_CURRENCY/CASH"
+        rate:
+          type: number
+          format: double
+          example: 1.25
+        created_at:
+          type: string
+          format: date-time
+
+    RateForm:
+      type: object
+      properties:
+        currency_pair:
+          type: string
+          example: "LOCAL_CURRENCY/CASH"
+        rate:
+          type: number
+          format: double
+          example: 1.25
