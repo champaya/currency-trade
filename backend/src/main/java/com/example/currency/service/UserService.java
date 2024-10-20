@@ -1,11 +1,15 @@
 package com.example.currency.service;
 
+import com.example.currency.domain.CurrencyType;
 import com.example.currency.domain.User;
+import com.example.currency.domain.Wallet;
 import com.example.currency.repository.UserRepository;
+import com.example.currency.repository.WalletRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,10 +18,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    // 全ユーザー取得
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+    @Autowired
+    private WalletRepository walletRepository;
 
     // 特定ユーザー取得
     public Optional<User> getUserById(Long userId) {
@@ -25,11 +27,20 @@ public class UserService {
     }
 
     // ユーザー登録
+    @Transactional
     public User createUser(User user) {
         // 登録時に日時を設定
         user.setCreatedAt(java.time.LocalDateTime.now());
         user.setUpdatedAt(java.time.LocalDateTime.now());
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // ユーザ作成と同時に現金のウォレットを作成
+        Wallet cashWallet = new Wallet();
+        cashWallet.setUser(user);
+        cashWallet.setCurrencyType(CurrencyType.CASH);
+        walletRepository.save(cashWallet);
+
+        return savedUser;
     }
 
     // ユーザー更新
@@ -37,7 +48,6 @@ public class UserService {
         return userRepository.findById(userId).map(user -> {
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
-            user.setPasswordHash(userDetails.getPasswordHash());
             user.setUpdatedAt(java.time.LocalDateTime.now());
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
@@ -46,5 +56,12 @@ public class UserService {
     // ユーザー削除
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    // ログイン処理
+    // TODO Userを返すのではなくて、認証結果を返す
+    public User loginUser(User user) {
+        return userRepository.findByEmailAndPasswordHash(user.getEmail(), user.getPasswordHash())
+                .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
     }
 }

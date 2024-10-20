@@ -2,6 +2,7 @@ package com.example.currency.service;
 
 import com.example.currency.domain.Rate;
 import com.example.currency.domain.Trade;
+import com.example.currency.domain.TradeStatus;
 import com.example.currency.domain.TradeType;
 import com.example.currency.repository.RateRepository;
 import com.example.currency.repository.TradeRepository;
@@ -32,8 +33,8 @@ public class RateService {
     @Scheduled(fixedRate = 60000) // 1分ごとに実行
     public void updateRateBasedOnTrades() {
         // 1分以内に発生した売買注文を取得する（例: 1分以内に作成された取引）
-        List<Trade> buyTrades = tradeRepository.findByTradeTypeAndStatus(TradeType.BUY, "open");
-        List<Trade> sellTrades = tradeRepository.findByTradeTypeAndStatus(TradeType.SELL, "open");
+        List<Trade> buyTrades = tradeRepository.findByTradeTypeAndStatus(TradeType.BUY, TradeStatus.OPEN);
+        List<Trade> sellTrades = tradeRepository.findByTradeTypeAndStatus(TradeType.SELL, TradeStatus.OPEN);
 
         BigDecimal totalBuyAmount = buyTrades.stream()
                 .map(Trade::getAmount)
@@ -47,7 +48,8 @@ public class RateService {
 
         // レートを更新する
         Rate updatedRate = new Rate();
-        updatedRate.setCurrencyPair("LOCAL_CURRENCY/CASH");
+        updatedRate.setNumeratorCurrency("LOCAL_CURRENCY");
+        updatedRate.setDenominatorCurrency("CASH");
         updatedRate.setRate(newRate);
         rateRepository.save(updatedRate);
 
@@ -65,7 +67,8 @@ public class RateService {
     }
 
     // 最新のレートを取得
-    public Rate getLatestRate(String currencyPair) {
-        return rateRepository.findTopByCurrencyPairOrderByCreatedAtDesc(currencyPair);
+    public Rate getLatestRate(String numeratorCurrency, String denominatorCurrency) {
+        return rateRepository.findTopByNumeratorCurrencyAndDenominatorCurrencyOrderByCreatedAtDesc(numeratorCurrency,
+                denominatorCurrency);
     }
 }

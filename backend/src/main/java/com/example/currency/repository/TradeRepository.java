@@ -13,7 +13,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
 
     List<Trade> findByStatus(TradeStatus status);
 
-    List<Trade> findByUserId(Long userId);
+    List<Trade> findByUser_UserId(Long userId);
 
-    List<Trade> findByTradeTypeAndStatus(TradeType tradeType, String status);
+    List<Trade> findByTradeTypeAndStatus(TradeType tradeType, TradeStatus status);
 }

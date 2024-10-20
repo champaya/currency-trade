@@ -13,7 +13,10 @@ public class Rate {
     private Long rateId;
 
     @Column(nullable = false)
-    private String currencyPair; // ex: "LOCAL_CURRENCY/CASH"
+    private String numeratorCurrency;
+
+    @Column(nullable = false)
+    private String denominatorCurrency;
 
     @Column(nullable = false)
     private BigDecimal rate;
@@ -35,12 +38,20 @@ public class Rate {
         this.rateId = rateId;
     }
 
-    public String getCurrencyPair() {
-        return currencyPair;
+    public String getNumeratorCurrency() {
+        return numeratorCurrency;
     }
 
-    public void setCurrencyPair(String currencyPair) {
-        this.currencyPair = currencyPair;
+    public void setNumeratorCurrency(String numeratorCurrency) {
+        this.numeratorCurrency = numeratorCurrency;
+    }
+
+    public String getDenominatorCurrency() {
+        return denominatorCurrency;
+    }
+
+    public void setDenominatorCurrency(String denominatorCurrency) {
+        this.denominatorCurrency = denominatorCurrency;
     }
 
     public BigDecimal getRate() {

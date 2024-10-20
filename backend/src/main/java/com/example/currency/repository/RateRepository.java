@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RateRepository extends JpaRepository<Rate, Long> {
-    Rate findTopByCurrencyPairOrderByCreatedAtDesc(String currencyPair); // 最新のレートを取得
+    Rate findTopByNumeratorCurrencyAndDenominatorCurrencyOrderByCreatedAtDesc(String numeratorCurrency,
+            String denominatorCurrency); // 最新のレートを取得
 }

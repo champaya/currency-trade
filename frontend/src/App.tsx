@@ -1,12 +1,14 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Dashboard from './pages/Dashboard';
-import CoinList from './pages/CoinList';
-import CoinTrade from './pages/CoinTrade';
-import DepositWithdraw from './pages/DepositWithdraw';
-import Profile from './pages/Profile';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Dashboard from "./pages/Dashboard";
+import CoinList from "./pages/CoinList";
+import CoinTrade from "./pages/CoinTrade";
+import DepositWithdraw from "./pages/DepositWithdraw";
+import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 const App: React.FC = () => {
   return (
@@ -15,6 +17,8 @@ const App: React.FC = () => {
         <Header />
         <main className="flex-grow">
           <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/trade" element={<CoinList />} />
             <Route path="/trade/:coinId" element={<CoinTrade />} />
@@ -26,6 +30,6 @@ const App: React.FC = () => {
       </div>
     </Router>
   );
-}
+};
 
 export default App;

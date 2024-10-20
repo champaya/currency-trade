@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { DollarSign } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 interface Coin {
   id: string;
   name: string;
-  symbol: string;
-  price: number;
-  change: number;
 }
+
+// TODO 一旦コインのデータをモックで作成。将来的にはDBから取得するようにする
+const mockCoins = [
+  {
+    id: "btc",
+    name: "東京コイン",
+  },
+  {
+    id: "eth",
+    name: "神奈川コイン",
+  },
+  { id: "xrp", name: "沖縄コイン" },
+  {
+    id: "ltc",
+    name: "北海道コイン",
+  },
+];
 
 const CoinList: React.FC = () => {
   const [coins, setCoins] = useState<Coin[]>([]);
 
   useEffect(() => {
-    // Fetch coins from API in a real application
-    const mockCoins: Coin[] = [
-      { id: 'btc', name: 'ビットコイン', symbol: 'BTC', price: 5352637, change: 2.5 },
-      { id: 'eth', name: 'イーサリアム', symbol: 'ETH', price: 193478, change: -1.2 },
-      { id: 'xrp', name: 'リップル', symbol: 'XRP', price: 50, change: 0.8 },
-      { id: 'ltc', name: 'ライトコイン', symbol: 'LTC', price: 13000, change: 1.5 },
-    ];
     setCoins(mockCoins);
   }, []);
 
@@ -34,7 +41,12 @@ const CoinList: React.FC = () => {
             to={`/trade/${coin.id}`}
             className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow duration-300"
           >
-            {/* Coin details */}
+            <>
+              <div className="flex items-center mb-2">
+                <DollarSign className="text-green-500 mr-2" />
+                <h2 className="text-lg font-bold">{coin.name}</h2>
+              </div>
+            </>
           </Link>
         ))}
       </div>

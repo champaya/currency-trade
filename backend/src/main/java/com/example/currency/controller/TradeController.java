@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/trades")
 public class TradeController {
 
@@ -45,6 +46,7 @@ public class TradeController {
             tradeDetails.setTradeType(tradeForm.getTradeType());
             tradeDetails.setAmount(tradeForm.getAmount());
             tradeDetails.setRate(tradeForm.getRate());
+            tradeDetails.setLocalCurrencyName(tradeForm.getLocalCurrencyName());
             Trade createdTrade = tradeService.createTrade(user.get(), tradeDetails);
             return new ResponseEntity<>(createdTrade, HttpStatus.CREATED);
         } else {

@@ -13,7 +13,7 @@ public class Trade {
     private Long tradeId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -38,6 +38,9 @@ public class Trade {
 
     @Column
     private LocalDateTime matchedAt; // マッチング日時
+
+    @Column
+    private String localCurrencyName;
 
     @Column
     private LocalDateTime completedAt; // 完了日時
@@ -135,6 +138,14 @@ public class Trade {
         this.completedAt = completedAt;
     }
 
+    public String getLocalCurrencyName() {
+        return localCurrencyName;
+    }
+
+    public void setLocalCurrencyName(String localCurrencyName) {
+        this.localCurrencyName = localCurrencyName;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -150,7 +161,5 @@ public class Trade {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    // Getters and Setters
 
 }

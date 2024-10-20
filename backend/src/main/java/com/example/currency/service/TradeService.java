@@ -24,6 +24,7 @@ public class TradeService {
         trade.setTradeType(tradeDetails.getTradeType());
         trade.setAmount(tradeDetails.getAmount());
         trade.setRate(tradeDetails.getRate());
+        trade.setLocalCurrencyName(tradeDetails.getLocalCurrencyName());
         trade.setStatus(TradeStatus.OPEN);
         return tradeRepository.save(trade);
     }
@@ -75,6 +76,6 @@ public class TradeService {
     }
 
     public List<Trade> getTradesByUserId(Long userId) {
-        return tradeRepository.findByUserId(userId);
+        return tradeRepository.findByUser_UserId(userId);
     }
 }

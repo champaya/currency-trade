@@ -33,18 +33,22 @@ public class TradeHistory {
     @Column(nullable = false)
     private LocalDateTime completedAt;
 
+    @Column(nullable = false)
+    private String localCurrencyName;
+
     // コンストラクタ、ゲッター、セッター
     public TradeHistory() {
     }
 
     public TradeHistory(User user, Trade trade, TradeType tradeType, BigDecimal amount, BigDecimal rate,
-            LocalDateTime completedAt) {
+            LocalDateTime completedAt, String localCurrencyName) {
         this.user = user;
         this.trade = trade;
         this.tradeType = tradeType;
         this.amount = amount;
         this.rate = rate;
         this.completedAt = completedAt;
+        this.localCurrencyName = trade.getLocalCurrencyName();
     }
 
     public Long getHistoryId() {
@@ -103,6 +107,12 @@ public class TradeHistory {
         this.completedAt = completedAt;
     }
 
-    // Getters and Setters
+    public String getLocalCurrencyName() {
+        return localCurrencyName;
+    }
+
+    public void setLocalCurrencyName(String localCurrencyName) {
+        this.localCurrencyName = localCurrencyName;
+    }
 
 }

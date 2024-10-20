@@ -16,6 +16,9 @@ public class TradeForm {
     @NotNull(message = "レートは必須です")
     private BigDecimal rate;
 
+    @NotNull(message = "通貨名は必須です")
+    private String localCurrencyName;
+
     // コンストラクタ、ゲッター、セッター
     public TradeForm() {
     }
@@ -42,5 +45,13 @@ public class TradeForm {
 
     public void setRate(BigDecimal rate) {
         this.rate = rate;
+    }
+
+    public String getLocalCurrencyName() {
+        return localCurrencyName;
+    }
+
+    public void setLocalCurrencyName(String localCurrencyName) {
+        this.localCurrencyName = localCurrencyName;
     }
 }

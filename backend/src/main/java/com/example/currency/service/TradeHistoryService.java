@@ -22,7 +22,8 @@ public class TradeHistoryService {
                 trade.getTradeType(),
                 trade.getAmount(),
                 trade.getRate(),
-                trade.getCompletedAt());
+                trade.getCompletedAt(),
+                trade.getLocalCurrencyName());
         tradeHistoryRepository.save(tradeHistory);
     }
 

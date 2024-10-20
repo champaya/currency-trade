@@ -9,22 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
-
-    // ユーザーの取得 (GET)
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
 
     // 特定のユーザーを取得 (GET)
     @GetMapping("/{userId}")
@@ -40,7 +33,7 @@ public class UserController {
         User user = new User();
         user.setUsername(userForm.getUsername());
         user.setEmail(userForm.getEmail());
-        user.setPasswordHash(userForm.getPassword()); // 実際はハッシュ化が必要
+        user.setPasswordHash(userForm.getPassword()); // TODO 実際はハッシュ化が必要
         User createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
@@ -51,7 +44,6 @@ public class UserController {
         User userDetails = new User();
         userDetails.setUsername(userForm.getUsername());
         userDetails.setEmail(userForm.getEmail());
-        userDetails.setPasswordHash(userForm.getPassword()); // 実際はハッシュ化が必要
         User updatedUser = userService.updateUser(userId, userDetails);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }

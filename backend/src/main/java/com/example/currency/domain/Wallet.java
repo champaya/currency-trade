@@ -21,6 +21,8 @@ public class Wallet {
     private CurrencyType currencyType;
 
     @Column(nullable = false)
+    private String localCurrencyName;
+    @Column(nullable = false)
     private BigDecimal balance;
 
     @Column(nullable = false)
@@ -60,6 +62,14 @@ public class Wallet {
 
     public void setCurrencyType(CurrencyType currencyType) {
         this.currencyType = currencyType;
+    }
+
+    public String getLocalCurrencyName() {
+        return localCurrencyName;
+    }
+
+    public void setLocalCurrencyName(String localCurrencyName) {
+        this.localCurrencyName = localCurrencyName;
     }
 
     public BigDecimal getBalance() {

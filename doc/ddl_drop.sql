@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS wallet_transactions;
+DROP TABLE IF EXISTS trade_history;
+DROP TABLE IF EXISTS trades;
+DROP TABLE IF EXISTS wallets;
+DROP TABLE IF EXISTS rates;
+DROP TABLE IF EXISTS users;

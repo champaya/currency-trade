@@ -14,9 +14,9 @@ public class RateWebSocketController {
     private RateService rateService;
 
     // クライアントからのレートリクエストを処理し、最新のレートを返す
-    @MessageMapping("/rate/get")
-    @SendTo("/topic/rates")
-    public Rate getLatestRate(String currencyPair) throws Exception {
-        return rateService.getLatestRate(currencyPair);
+    @MessageMapping("/rate/get") // クライアントは /app/rate/get にメッセージを送信
+    @SendTo("/topic/rates") // クライアントは /topic/rates を購読
+    public Rate getLatestRate(String numeratorCurrency, String denominatorCurrency) throws Exception {
+        return rateService.getLatestRate(numeratorCurrency, denominatorCurrency);
     }
 }

@@ -2,6 +2,7 @@ package com.example.currency.controller;
 
 import com.example.currency.domain.User;
 import com.example.currency.domain.Wallet;
+import com.example.currency.domain.WalletTransaction;
 import com.example.currency.form.WalletForm;
 import com.example.currency.service.UserService;
 import com.example.currency.service.WalletService;
@@ -11,10 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/wallets")
 public class WalletController {
 
@@ -60,6 +63,29 @@ public class WalletController {
     @DeleteMapping("/{walletId}")
     public ResponseEntity<Void> deleteWallet(@PathVariable Long walletId) {
         walletService.deleteWallet(walletId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // ウォレットの取引履歴を取得 (GET)
+    @GetMapping("/{walletId}/transactions")
+    public ResponseEntity<List<WalletTransaction>> getTransactionHistory(@PathVariable Long walletId) {
+        List<WalletTransaction> transactions = walletService.getTransactionHistory(walletId);
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
+
+    // TODO POSTなのにRequestParamを使っている。クエリパラメータ使わざるを得なくなっている。
+    // ウォレットの入金 (POST)
+    @PostMapping("/{walletId}/deposit")
+    public ResponseEntity<Void> deposit(@PathVariable Long walletId, @RequestParam BigDecimal amount) {
+        walletService.deposit(walletId, amount);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // TODO POSTなのにRequestParamを使っている。クエリパラメータ使わざるを得なくなっている。
+    // ウォレットの出金 (POST)
+    @PostMapping("/{walletId}/withdraw")
+    public ResponseEntity<Void> withdraw(@PathVariable Long walletId, @RequestParam BigDecimal amount) {
+        walletService.withdraw(walletId, amount);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
