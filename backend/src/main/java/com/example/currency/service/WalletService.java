@@ -1,6 +1,7 @@
 package com.example.currency.service;
 
 import com.example.currency.domain.CurrencyType;
+import com.example.currency.domain.Rate;
 import com.example.currency.domain.TransactionType;
 import com.example.currency.domain.User;
 import com.example.currency.domain.Wallet;
@@ -24,6 +25,9 @@ public class WalletService {
 
     @Autowired
     private WalletTransactionRepository walletTransactionRepository;
+
+    @Autowired
+    private RateService rateService;
 
     // ユーザーの全ウォレット取得
     public List<Wallet> getWalletsByUserId(Long userId) {
@@ -126,4 +130,74 @@ public class WalletService {
         walletTransactionRepository.save(transaction);
     }
 
+    /**
+     * 現金から地域通貨への変換処理
+     * 
+     * @param userId            ユーザーID
+     * @param cashAmount        変換する現金量
+     * @param localCurrencyName 地域通貨名
+     * @return 変換後の地域通貨ウォレット
+     */
+    @Transactional
+    public Wallet convertCashToLocalCurrency(Long userId, BigDecimal cashAmount, String localCurrencyName) {
+        // 現金ウォレットの取得
+        Wallet cashWallet = getWalletsByUserId(userId).stream()
+                .filter(w -> w.getCurrencyType() == CurrencyType.CASH)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("現金ウォレットが見つかりません"));
+
+        // 残高チェック
+        if (cashWallet.getBalance().compareTo(cashAmount) < 0) {
+            throw new RuntimeException("現金残高が不足しています");
+        }
+
+        // 最新のレートを取得
+        Rate currentRate = rateService.getLatestRate("LOCAL_CURRENCY", "CASH");
+        if (currentRate == null) {
+            throw new RuntimeException("レートが見つかりません");
+        }
+
+        // 地域通貨量を計算（現金量 * レート）
+        BigDecimal localCurrencyAmount = cashAmount.multiply(currentRate.getRate());
+
+        // 地域通貨ウォレットの取得または作成
+        Wallet localCurrencyWallet = getWalletsByUserId(userId).stream()
+                .filter(w -> w.getCurrencyType() == CurrencyType.LOCAL_CURRENCY
+                        && w.getLocalCurrencyName().equals(localCurrencyName))
+                .findFirst()
+                .orElseGet(() -> {
+                    Wallet newWallet = new Wallet();
+                    newWallet.setUser(cashWallet.getUser());
+                    newWallet.setCurrencyType(CurrencyType.LOCAL_CURRENCY);
+                    newWallet.setLocalCurrencyName(localCurrencyName);
+                    newWallet.setBalance(BigDecimal.ZERO);
+                    return walletRepository.save(newWallet);
+                });
+
+        // 現金を減らす
+        cashWallet.setBalance(cashWallet.getBalance().subtract(cashAmount));
+        walletRepository.save(cashWallet);
+
+        // 地域通貨を増やす
+        localCurrencyWallet.setBalance(localCurrencyWallet.getBalance().add(localCurrencyAmount));
+        walletRepository.save(localCurrencyWallet);
+
+        // 取引履歴を記録（現金の出金）
+        WalletTransaction cashTransaction = new WalletTransaction();
+        cashTransaction.setWallet(cashWallet);
+        cashTransaction.setTransactionType(TransactionType.WITHDRAWAL);
+        cashTransaction.setAmount(cashAmount);
+        cashTransaction.setBalanceAfter(cashWallet.getBalance());
+        walletTransactionRepository.save(cashTransaction);
+
+        // 取引履歴を記録（地域通貨の入金）
+        WalletTransaction localTransaction = new WalletTransaction();
+        localTransaction.setWallet(localCurrencyWallet);
+        localTransaction.setTransactionType(TransactionType.DEPOSIT);
+        localTransaction.setAmount(localCurrencyAmount);
+        localTransaction.setBalanceAfter(localCurrencyWallet.getBalance());
+        walletTransactionRepository.save(localTransaction);
+
+        return localCurrencyWallet;
+    }
 }

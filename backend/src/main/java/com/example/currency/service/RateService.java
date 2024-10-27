@@ -71,4 +71,17 @@ public class RateService {
         return rateRepository.findTopByNumeratorCurrencyAndDenominatorCurrencyOrderByCreatedAtDesc(numeratorCurrency,
                 denominatorCurrency);
     }
+
+    /**
+     * 指定された通貨ペアの過去1000件のレート履歴を取得
+     * 
+     * @param numeratorCurrency   分子通貨（例：LOCAL_CURRENCY）
+     * @param denominatorCurrency 分母通貨（例：CASH）
+     * @return レート履歴のリスト
+     */
+    public List<Rate> getRateHistory(String numeratorCurrency, String denominatorCurrency) {
+        return rateRepository.findTop1000ByNumeratorCurrencyAndDenominatorCurrencyOrderByCreatedAtAsc(
+                numeratorCurrency,
+                denominatorCurrency);
+    }
 }

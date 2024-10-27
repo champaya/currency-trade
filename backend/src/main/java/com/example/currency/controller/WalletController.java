@@ -88,4 +88,21 @@ public class WalletController {
         walletService.withdraw(walletId, amount);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    /**
+     * 現金から地域通貨への変換
+     */
+    @PostMapping("/convert")
+    public ResponseEntity<Wallet> convertCashToLocalCurrency(
+            @RequestParam Long userId,
+            @RequestParam BigDecimal cashAmount,
+            @RequestParam String localCurrencyName) {
+        try {
+            Wallet convertedWallet = walletService.convertCashToLocalCurrency(
+                    userId, cashAmount, localCurrencyName);
+            return new ResponseEntity<>(convertedWallet, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

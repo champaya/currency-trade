@@ -9,6 +9,7 @@ import DepositWithdraw from "./pages/DepositWithdraw";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Convert from "./pages/Convert";
 
 const App: React.FC = () => {
   return (
@@ -24,6 +25,7 @@ const App: React.FC = () => {
             <Route path="/trade/:coinId" element={<CoinTrade />} />
             <Route path="/deposit-withdraw" element={<DepositWithdraw />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/convert" element={<Convert />} />
           </Routes>
         </main>
         <Footer />

@@ -38,6 +38,7 @@ public class UserService {
         Wallet cashWallet = new Wallet();
         cashWallet.setUser(user);
         cashWallet.setCurrencyType(CurrencyType.CASH);
+        cashWallet.setLocalCurrencyName("");
         walletRepository.save(cashWallet);
 
         return savedUser;

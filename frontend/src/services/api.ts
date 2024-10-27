@@ -33,6 +33,7 @@ export interface User {
 export interface Transaction {
   transactionId: number;
   wallet: Wallet;
+
   transactionType: "DEPOSIT" | "WITHDRAWAL";
   amount: number;
   balanceAfter: number;
@@ -129,6 +130,32 @@ export const createTrade = (
     rate,
     localCurrencyName,
   });
+};
+
+export const convertToLocalCurrency = (
+  userId: number,
+  cashAmount: number,
+  localCurrencyName: string
+): Promise<AxiosResponse<void>> => {
+  return api.post(
+    `/wallets/convert?userId=${userId}&cashAmount=${cashAmount}&localCurrencyName=${localCurrencyName}`
+  );
+};
+
+export interface HistoricalRate {
+  rateId: number;
+  numeratorCurrency: string;
+  denominatorCurrency: string;
+  rate: number;
+  createdAt: string;
+}
+
+export const getRateHistory = async (
+  numeratorCurrency: string
+): Promise<AxiosResponse<HistoricalRate[]>> => {
+  return api.get(
+    `/rates/history?numeratorCurrency=LOCAL_CURRENCY&denominatorCurrency=CASH`
+  );
 };
 
 export default api;

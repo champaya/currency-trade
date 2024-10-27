@@ -19,6 +19,7 @@ const DepositWithdraw: React.FC = () => {
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [error, setError] = useState<string>("");
+  const [walletId, setWalletId] = useState<number>(-1);
 
   /**
    * 取引履歴を取得
@@ -26,15 +27,23 @@ const DepositWithdraw: React.FC = () => {
   useEffect(() => {
     const userId = Cookies.get("userId");
 
-    getCashTransactions(1).then((response) => {
-      setTransactions(response.data);
-    });
     getWallets(Number(userId)).then((response) => {
-      console.log(response.data);
-      setBalance(
+      setWalletId(
         response.data.filter((wallet) => wallet.currencyType === "CASH")[0]
-          .balance
+          .walletId
       );
+
+      getCashTransactions(walletId).then((response) => {
+        setTransactions(response.data);
+      });
+
+      getWallets(Number(userId)).then((response) => {
+        console.log(response.data);
+        setBalance(
+          response.data.filter((wallet) => wallet.currencyType === "CASH")[0]
+            .balance
+        );
+      });
     });
   }, []);
 
@@ -56,14 +65,13 @@ const DepositWithdraw: React.FC = () => {
    */
   const confirmTransaction = () => {
     const numAmount = Number(amount);
-    console.log(numAmount);
 
     if (transactionType === "WITHDRAWAL") {
-      cashWithdrawal(1, numAmount).then(() => {
+      cashWithdrawal(walletId, numAmount).then(() => {
         window.location.reload();
       });
     } else if (transactionType === "DEPOSIT") {
-      cashDeposit(1, numAmount).then(() => {
+      cashDeposit(walletId, numAmount).then(() => {
         window.location.reload();
       });
     } else {
